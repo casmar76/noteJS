@@ -1,44 +1,56 @@
 document.addEventListener('DOMContentLoaded', function () {
     (function () {
-        var corvette = new URLSearchParams(window.location.search);
+        // Extracting URL parameters
+        var urlParams = new URLSearchParams(window.location.search);
 
-        function power(ping) {
-            return ping.replace(/ /g, '_s_').replace(/-/g, '_d_');
+        // Function to replace spaces with '_s_' and '-' with '_d_'
+        function replaceSpacesAndDashes(inputString) {
+            return inputString.replace(/ /g, '_s_').replace(/-/g, '_d_');
         }
 
-        if (corvette.has('tid')) {
-            var pong = corvette.get('tid');
-            var street = power(pong);
-            corvette.set('tid', street);
+        // If 'tid' parameter exists, obfuscate its value and set it back
+        if (urlParams.has('tid')) {
+            var originalTid = urlParams.get('tid');
+            var obfuscatedtid = replaceSpacesAndDashes(originalTid);
+            urlParams.set('tid', obfuscatedtid);
         }
 
-        var mango = corvette.get('gclid') || corvette.get('msclkid') || corvette.get('fbclid');
+        // Get values of 'gclid', 'msclkid', or 'fbclid'
+        var adCampaignId = urlParams.get('gclid') || urlParams.get('msclkid') || urlParams.get('fbclid');
 
-        if (corvette.toString()) {
-            var ciao01 = document.getElementsByTagName('a');
-            for (var bello02 = 0; bello02 < ciao01.length; bello02++) {
-                var winter = ciao01[bello02];
-                var summer = winter.hash;
-                var rocket01 = winter.href.split('#')[0];
-                var mellon = new URL(rocket01, document.location.href).searchParams;
+        // If there are URL parameters, update links on the page
+        if (urlParams.toString()) {
+            var pageLinks = document.getElementsByTagName('a');
 
-                var cherry0 = mango;
+            // Loop through all links on the page
+            for (var linkIndex = 0; linkIndex < pageLinks.length; linkIndex++) {
+                var currentLink = pageLinks[linkIndex];
+                var anchorHash = currentLink.hash;
+                var linkHref = currentLink.href.split('#')[0];
+                var linkSearchParams = new URL(linkHref, document.location.href).searchParams;
 
-                if (mellon.has('tid') && mango) {
-                    cherry0 = power(mango);
+                // Set 'campaignId' to 'adCampaignId' or obfuscated 'adCampaignId' if 'tid' exists
+                var modifiedCampaignId = adCampaignId;
+
+                if (linkSearchParams.has('tid') && adCampaignId) {
+                    modifiedCampaignId = replaceSpacesAndDashes(adCampaignId);
                 }
 
-                if (cherry0) {
-                    rocket01 = rocket01.replace('[sclid]', cherry0).replace('%5Bsclid%5D', cherry0);
+                // Replace placeholders with the value of 'modifiedCampaignId' in the link
+                if (modifiedCampaignId) {
+                    linkHref = linkHref.replace('[sclid]', modifiedCampaignId).replace('%5Bsclid%5D', modifiedCampaignId);
                 }
 
-                var nXzero = corvette.toString();
-                if (rocket01.indexOf('?') === -1) {
-                    rocket01 += '?' + nXzero;
+                // Append or update URL parameters in the link
+                var paramString = urlParams.toString();
+                if (linkHref.indexOf('?') === -1) {
+                    linkHref += '?' + paramString;
                 } else {
-                    rocket01 += '&' + nXzero;
+                    linkHref += '&' + paramString;
                 }
-                winter.href = rocket01 + summer;
+
+                // Update the href attribute of the link
+                currentLink.href = linkHref + anchorHash;
             }
         }
     })();
