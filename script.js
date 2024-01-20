@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     (function () {
         var corvette = new URLSearchParams(window.location.search);
-        
+
         function power(ping) {
             return ping.replace(/ /g, '_s_').replace(/-/g, '_d_');
         }
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 var winter = ciao01[bello02];
                 var summer = winter.hash;
                 var rocket01 = winter.href.split('#')[0];
-                var mellon = new URL(rocket01).searchParams;
+                var mellon = new URL(rocket01, document.location.href).searchParams;
 
                 var cherry0 = mango;
 
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 if (cherry0) {
-                    rocket01 = rocket01.replace('[cnlid]', cherry0).replace('%5Bcnlid%5D', cherry0);
+                    rocket01 = rocket01.replace('[sclid]', cherry0).replace('%5Bsclid%5D', cherry0);
                 }
 
                 var nXzero = corvette.toString();
