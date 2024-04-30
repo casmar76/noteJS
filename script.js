@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Function to replace spaces with '_s_' and '-' with '_d_'
         function replaceSpacesAndDashes(inputString) {
-            return inputString.replace(/ /g, '_s_').replace(/-/g, '_d_');
+            return inputString.replace(/ /g, '_s_').replace(/-/g, '_d_').replace(/\//g, '');
         }
 
         // If 'tid' parameter exists, obfuscate its value and set it back
