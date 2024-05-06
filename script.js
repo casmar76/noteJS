@@ -8,13 +8,6 @@ document.addEventListener('DOMContentLoaded', function () {
             return inputString.replace(/ /g, '_s_').replace(/-/g, '_d_').replace(/\//g, '');
         }
 
-        // If 'tid' parameter exists, obfuscate its value and set it back
-        if (urlParams.has('tid')) {
-            var originalTid = urlParams.get('tid');
-            var obfuscatedtid = replaceSpacesAndDashes(originalTid);
-            urlParams.set('tid', obfuscatedtid);
-        }
-
         // Get values of 'gclid', 'msclkid', or 'fbclid'
         var adCampaignId = urlParams.get('gclid') || urlParams.get('msclkid') || urlParams.get('fbclid');
 
