@@ -5,7 +5,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Function to replace spaces with '_s_' and '-' with '_d_'
         function replaceSpacesAndDashes(inputString) {
-            return inputString.replace(/ /g, '_s_').replace(/-/g, '_d_').replace(/\//g, '');
+            return inputString.replace(/ /g, '_s_').replace(/-/g, '_d_');
+        }
+
+        // If 'tid' parameter exists, obfuscate its value and set it back
+        if (urlParams.has('tid')) {
+            var originalTid = urlParams.get('tid');
+            var obfuscatedtid = replaceSpacesAndDashes(originalTid);
+            urlParams.set('tid', obfuscatedtid);
         }
 
         // Get values of 'gclid', 'msclkid', or 'fbclid'
