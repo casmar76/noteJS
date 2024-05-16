@@ -1,40 +1,35 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
     (function () {
-        // Extracting URL parameters
-        var urlParams = new URLSearchParams(window.location.search);
+        const urlParams = new URLSearchParams(window.location.search);
 
-        // Function to replace spaces with '_s_' and '-' with '_d_'
-        function replaceSpacesAndDashes(inputString) {
-            return inputString.replace(/ /g, '_s_').replace(/-/g, '_d_');
-        }
+        // Function to replace spaces with '_s_', dashes with '_d_', and remove slashes
+        const replaceSpacesAndDashes = (inputString) =>
+            inputString.replace(/ /g, '_s_').replace(/-/g, '_d_').replace(/\//g, '');
 
-        // If 'tid' parameter exists, obfuscate its value and set it back
+        // If 'tid' parameter exists, replace its value and set it back
         if (urlParams.has('tid')) {
-            var originalTid = urlParams.get('tid');
-            var obfuscatedtid = replaceSpacesAndDashes(originalTid);
-            urlParams.set('tid', obfuscatedtid);
+            const originalTid = urlParams.get('tid');
+            const replacedTid = replaceSpacesAndDashes(originalTid);
+            urlParams.set('tid', replacedTid);
         }
 
-        // Get values of 'gclid', 'msclkid', or 'fbclid'
-        var adCampaignId = urlParams.get('gclid') || urlParams.get('msclkid') || urlParams.get('fbclid');
+        // Get values of 'gclid', 'wbraid', 'msclkid', or 'fbclid' from the URL parameters
+        const adCampaignId = urlParams.get('gclid') || urlParams.get('wbraid') || urlParams.get('msclkid') || urlParams.get('fbclid');
+        let modifiedCampaignId = adCampaignId;
 
-        // If there are URL parameters, update links on the page
-        if (urlParams.toString()) {
-            var pageLinks = document.getElementsByTagName('a');
+        if (adCampaignId && urlParams.has('tid')) {
+            modifiedCampaignId = replaceSpacesAndDashes(adCampaignId);
+        }
 
-            // Loop through all links on the page
-            for (var linkIndex = 0; linkIndex < pageLinks.length; linkIndex++) {
-                var currentLink = pageLinks[linkIndex];
-                var anchorHash = currentLink.hash;
-                var linkHref = currentLink.href.split('#')[0];
-                var linkSearchParams = new URL(linkHref, document.location.href).searchParams;
+        // Create the updated URL parameters string once
+        const updatedUrlParamsString = urlParams.toString();
 
-                // Set 'campaignId' to 'adCampaignId' or obfuscated 'adCampaignId' if 'tid' exists
-                var modifiedCampaignId = adCampaignId;
+        if (updatedUrlParamsString) {
+            const pageLinks = document.querySelectorAll('a');
 
-                if (linkSearchParams.has('tid') && adCampaignId) {
-                    modifiedCampaignId = replaceSpacesAndDashes(adCampaignId);
-                }
+            pageLinks.forEach((link) => {
+                const anchorHash = link.hash;
+                let linkHref = link.href.split('#')[0];
 
                 // Replace placeholders with the value of 'modifiedCampaignId' in the link
                 if (modifiedCampaignId) {
@@ -42,16 +37,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 // Append or update URL parameters in the link
-                var paramString = urlParams.toString();
-                if (linkHref.indexOf('?') === -1) {
-                    linkHref += '?' + paramString;
+                if (!linkHref.includes('?')) {
+                    linkHref += '?' + updatedUrlParamsString;
                 } else {
-                    linkHref += '&' + paramString;
+                    linkHref += '&' + updatedUrlParamsString;
                 }
 
                 // Update the href attribute of the link
-                currentLink.href = linkHref + anchorHash;
-            }
+                link.href = linkHref + anchorHash;
+            });
         }
     })();
 });
