@@ -1,10 +1,23 @@
 document.addEventListener('DOMContentLoaded', () => {
     (function () {
         const urlParams = new URLSearchParams(window.location.search);
-
+        
         // Function to replace spaces with '_s_', dashes with '_d_', and remove slashes
         const replaceSpacesAndDashes = (inputString) =>
             inputString.replace(/ /g, '_s_').replace(/-/g, '_d_').replace(/\//g, '');
+
+        // Store the gclid in local storage if present in the URL
+        if (urlParams.has('gclid')) {
+            const gclid = urlParams.get('gclid');
+            localStorage.setItem('gclid', gclid);
+        }
+
+        // Retrieve gclid from local storage if not in the URL
+        const gclid = urlParams.get('gclid') || localStorage.getItem('gclid');
+
+        // Get values of 'gclid', 'wbraid', 'msclkid', or 'fbclid' from the url parameters
+        const adCampaignId = gclid || urlParams.get('wbraid') || urlParams.get('msclkid') || urlParams.get('fbclid');
+        let modifiedCampaignId = adCampaignId;
 
         // If 'tid' parameter exists, replace its value and set it back
         if (urlParams.has('tid')) {
@@ -12,10 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const replacedTid = replaceSpacesAndDashes(originalTid);
             urlParams.set('tid', replacedTid);
         }
-
-        // Get values of 'gclid', 'wbraid', 'msclkid', or 'fbclid' from the URL parameters
-        const adCampaignId = urlParams.get('gclid') || urlParams.get('wbraid') || urlParams.get('msclkid') || urlParams.get('fbclid');
-        let modifiedCampaignId = adCampaignId;
 
         if (adCampaignId && urlParams.has('tid')) {
             modifiedCampaignId = replaceSpacesAndDashes(adCampaignId);
